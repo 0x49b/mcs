@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            {{ page_title|default:"MCS" }}
+        {% endblock title %}
+    </title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .dark-mode-toggle {
+            padding-top: .7em;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+{% load static %}
+
+<div class="wrapper">
+
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="{% url 'index' %}">
+                <span class="align-middle">Minecraft Server Control</span>
+            </a>
+
+            <ul class="sidebar-nav">
+                <li class="sidebar-item active">
+                    <a class="sidebar-link" href="{% url 'index' %}">
+                        <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-header">
+                    Servers
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{% url 'server-overview' %}">
+                        <i class="align-middle" data-feather="hard-drive"></i> <span
+                            class="align-middle">Overview</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{% url 'server-binaries-overview' %}">
+                        <i class="align-middle" data-feather="box"></i> <span class="align-middle">Binaries</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="ui-cards.html">
+                        <i class="align-middle" data-feather="codesandbox"></i> <span
+                            class="align-middle">Properties</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-header">
+                    Plugins & Addons
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="charts-chartjs.html">
+                        <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">Charts</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="maps-google.html">
+                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">Maps</span>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+
+    <div class="main">
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <a class="sidebar-toggle js-sidebar-toggle">
+                <i class="hamburger align-self-center"></i>
+            </a>
+
+            <div class="navbar-collapse collapse">
+
+
+                <ul class="navbar-nav navbar-align">
+
+
+                    <li class="nav-item">
+                        <form class="d-flex dark-mode-toggle">
+                            <div class="form-check form-switch dark-mode-switch">
+
+                                <label for="dark-mode-toggle">
+                                    <input class="form-check-input" type="checkbox" id="dark-mode-toggle">
+                                    <i data-feather="moon"></i>
+                                </label>
+                            </div>
+
+                        </form>
+                    </li>
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                            <i class="align-middle" data-feather="settings"></i>
+                        </a>
+
+                        <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                            <img src="{% static 'img/placeholder.png' %}" class="avatar img-fluid rounded me-1"
+                                 alt="Charles Hall"/>
+                            <span class="text-dark">{{ user.username }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="{% url 'profile' %}">
+                                <i class="align-middle me-1" data-feather="user"></i>
+                                Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+
+        <main class="content">
+            <div class="container-fluid p-0">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </main>
+
+
+    </div>
+
+</div>
+
+<script src="{% static 'script/base.js' %}"></script>
+<script>
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+
+    const toggleDarkMode = darkMode => {
+        if (darkMode) {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    darkModeToggle.addEventListener('change', _ => {
+        toggleDarkMode(darkModeToggle.checked);
+    });
+
+
+    let dm = localStorage.getItem('theme');
+    darkModeToggle.checked = !(dm === null || dm === 'undefined' || dm === 'light');
+    toggleDarkMode(darkModeToggle.checked);
+
+
+</script>
+</body>
+</html>

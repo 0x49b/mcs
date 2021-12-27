@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}
+    MCS - Servers
+{% endblock title %}
+{% block content %}
+    <div class="mb-3">
+        <h1 class="h3 d-inline align-middle">Servers</h1>
+    </div>
+    <div class="card p-4">
+        {% if servers %}
+            <table class="table">
+                <tr>
+                    <th>Identifier</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                {% for server in servers %}
+                    <tr>
+                        <td>{{ server.identifier }}</td>
+                        <td>{{ server.name }}</td>
+                        <td>{{ server.server_binary.type }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>There are no Servers configured. Add a new by clicking XYX.</p>
+        {% endif %}
+    </div>
+{% endblock %}

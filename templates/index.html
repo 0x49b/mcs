@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    MCS - Test Interaction
+{% endblock title %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <a href="{% url "hello" %}">Say hello</a>
+
+    <form method="post" action="{% url "hello" %}">
+        {% csrf_token %}
+
+        <label>Playername <input type="text" name="playername"></label>
+        <button type="submit">clear inventory</button>
+
+    </form>
+
+
+    <form method="post" action="{% url "ban" %}">
+        {% csrf_token %}
+        <label>Playername <input type="text" name="playername"></label>
+        <label>Reason <input type="text" name="reason"></label>
+        <button type="submit">ban player</button>
+    </form>
+
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ stats }}
+
+{% endblock %}

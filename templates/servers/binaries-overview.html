@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+    MCS - Servers
+{% endblock title %}
+{% block content %}
+    <div class="mb-3">
+        <h1 class="h3 d-inline align-middle">Server Binaries</h1>
+    </div>
+    <div class="card p-4">
+
+
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Version</th>
+                    <th>Actions</th>
+                </tr>
+                {% for binary in binaries %}
+                    <tr>
+                        <td>{{ binary.name }}</td>
+                        <td>{{ binary.type }}</td>
+                        <td>{{ binary.version }}</td>
+                        <td>
+                            <a href="" class="btn btn-lg btn-outline-secondary"><i data-feather="edit"></i></a>
+                            <a href="" class="btn btn-lg btn-outline-danger"><i data-feather="trash-2"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+
+            <p>There are no Server Binaries added yet. Add a new by clicking XYX.</p>
+            <a href="{% url 'server-binaries-download' %}" class="btn btn-pinterest">Download a binary</a>
+
+
+    </div>
+{% endblock %}
