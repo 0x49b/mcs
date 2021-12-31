@@ -3,31 +3,102 @@
     MCS - Servers
 {% endblock title %}
 {% block content %}
+    {% load static %}
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">Servers</h1>
     </div>
-    <div class="card p-4">
+
+    <div class="row mb-3">
+
+
+        <div class="col">
+
+            <a href="#" class="btn btn-outline-info">
+                <i class="bi bi-plus-square"></i> Add Server </a>
+
+            <div class="btn-group" role="group" aria-label="Basic example">
+
+                <a href="{% url 'server-stop-server' 'all' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-stop"></i> Stop All Servers
+                </a>
+
+                <a href="{% url 'server-restart-server' 'all' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-arrow-clockwise"></i> Restart All Servers
+                </a>
+
+                <a href="{% url 'server-start-server' 'all' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-play"></i> Start All Servers
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="row">
+                <div class="col">
+                    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <div class="row">
         {% if servers %}
-            <table class="table">
-                <tr>
-                    <th>Identifier</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                {% for server in servers %}
-                    <tr>
-                        <td>{{ server.identifier }}</td>
-                        <td>{{ server.name }}</td>
-                        <td>{{ server.server_binary.type }}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                {% endfor %}
-            </table>
+            {% for server in servers %}
+                <div class="col-sm-3">
+                    <a href="{% url 'server-edit' server.identifier %}" class="card-link">
+                        <div class="card">
+                            {% if server.server_binary.type == 0 %}
+                                <img src="{% static 'img/server/bungeecord.png' %}" class="card-img-top"
+                                     alt="{{ server.server_binary.get_type_display }}">
+                            {% elif server.server_binary.type == 1 %}
+                                <img src="{% static 'img/server/spigot.png' %}" class="card-img-top"
+                                     alt="{{ server.server_binary.get_type_display }}">
+                            {% elif server.server_binary.type == 2 %}
+                                <img src="{% static 'img/server/bukkit.png' %}" class="card-img-top"
+                                     alt="{{ server.server_binary.get_type_display }}">
+                            {% elif server.server_binary.type == 3 %}
+                                <img src="{% static 'img/server/papermc.png' %}" class="card-img-top"
+                                     alt="{{ server.server_binary.get_type_display }}">
+                            {% elif server.server_binary.type == 4 %}
+                                <img src="{% static 'img/server/vanilla.png' %}" class="card-img-top"
+                                     alt="{{ server.server_binary.get_type_display }}">
+                            {% endif %}
+
+                            <div class="card-body">
+                                <h5 class="card-title">{{ server.name }}</h5>
+                                <p class="card-text">{{ server.server_binary.get_type_display }}
+                                    Version: {{ server.server_binary.version }}</p>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    {% if server.server_pid is None %}
+                                        <a href="{% url 'server-start-server' server.identifier %}"
+                                           class="btn btn-outline-secondary"> <i class="bi bi-play"></i> Start</a>
+                                    {% else %}
+                                        <a href="{% url 'server-stop-server' server.identifier %}"
+                                           class="btn btn-outline-danger"> <i class="bi bi-stop"></i> Stop</a>
+                                        <a href="{% url 'server-restart-server' server.identifier %}"
+                                           class="btn btn-outline-danger"> <i class="bi bi-arrow-clockwise"></i> Restart</a>
+                                        <a href="{% url 'server-console' server.identifier %}"
+                                           class="btn btn-outline-dark"><i class="bi bi-code-square"></i>
+                                            Console</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            {% endfor %}
         {% else %}
-            <p>There are no Servers configured. Add a new by clicking XYX.</p>
+            Add a server
         {% endif %}
     </div>
+
 {% endblock %}

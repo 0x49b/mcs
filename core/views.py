@@ -12,7 +12,7 @@ def index(request):
     query = QUERYClient(host='127.0.0.1', port=25580)
     stats = query.get_full_stats()
 
-    return render(request, 'index.html', {'stats': stats})
+    return render(request, 'core/test.html', {'stats': stats})
 
 
 async def say_hello(request):

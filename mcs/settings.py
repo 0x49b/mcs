@@ -2,7 +2,11 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from django.contrib import messages
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ASGI_APPLICATION = "mcs.asgi.application"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -26,9 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'crispy_forms',
+    'django_celery_results',
+    'channels',
 
     'core',
-    'servers'
+    'servers',
+    'dashboard'
 ]
 
 MIDDLEWARE = [
@@ -89,7 +96,7 @@ LOGOUT_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Zurich'
 USE_I18N = True
 USE_TZ = True
 
@@ -104,6 +111,8 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = os.path.join(os.getcwd(), "media")
 BINARY_DIR = os.path.join(MEDIA_ROOT, "binaries")
+SERVERS_DIR = os.path.join(MEDIA_ROOT, "servers")
+TMP_DIR = os.path.join(MEDIA_ROOT, 'tmp')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -113,3 +122,36 @@ RCON_PORT = 25575
 RCON_PASSWORD = 'mwRQrFeSV3Lk2ji9w29DhDVJcSWdEa'
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Europe/Zurich"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_BACKEND = 'django-db'
+# celery setting.
+CELERY_CACHE_BACKEND = 'default'
+
+# django setting.
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

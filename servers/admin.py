@@ -17,7 +17,8 @@ class ServerBinAdmin(admin.ModelAdmin):
 
 
 class ServerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'server_properties', 'server_binary',)
+    list_display = ('name', 'server_properties', 'server_binary', 'server_pid')
+    readonly_fields = ['server_pid']
 
 
 admin.site.register(ServerProperties, ServerPropertiesAdmin)

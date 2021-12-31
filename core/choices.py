@@ -17,4 +17,5 @@ SERVER_TYPE = (
     (1, 'Spigot'),
     (2, 'Bukkit'),
     (3, 'PaperMC'),
+    (4, 'Vanilla'),
 )

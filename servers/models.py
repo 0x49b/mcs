@@ -20,19 +20,21 @@ class ServerBin(models.Model):
     version = models.CharField(max_length=10, blank=False, null=False)
     download_path = models.URLField(blank=False, null=False)
 
+    binary_name = models.CharField(max_length=200, blank=True, help_text="this gets set when saving")
+
     def __str__(self):
         return self.name
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        super().save()
 
         url = self.download_path
-        name = url.rsplit('/', 1)[-1]
+        self.binary_name = url.rsplit('/', 1)[-1]
+        super().save()
 
-        if not os.path.exists(os.path.join(settings.BINARY_DIR, name)):
+        if not os.path.exists(os.path.join(settings.BINARY_DIR, self.binary_name)):
             server_jar = requests.get(url)
-            open(os.path.join(settings.BINARY_DIR, name), 'wb').write(server_jar.content)
+            open(os.path.join(settings.BINARY_DIR, self.binary_name), 'wb').write(server_jar.content)
 
     def delete(self, using=None, keep_parents=False):
         url = self.download_path
@@ -121,6 +123,7 @@ class Server(models.Model):
     server_properties = models.OneToOneField(ServerProperties, on_delete=models.CASCADE)
     server_binary = models.OneToOneField(ServerBin, on_delete=models.CASCADE)
     identifier = models.CharField(max_length=10, editable=False)
+    server_pid = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.name

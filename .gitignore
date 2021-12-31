@@ -13,6 +13,9 @@ log/
 
 venv
 
+/media/servers
+
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml

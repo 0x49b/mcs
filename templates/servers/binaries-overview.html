@@ -3,36 +3,52 @@
     MCS - Servers
 {% endblock title %}
 {% block content %}
+    {% load static %}
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">Server Binaries</h1>
     </div>
-    <div class="card p-4">
+
+    <div class="row mb-3">
+        <div class="col-2">
+            <a href="#" class="btn btn-outline-info"><i class="bi bi-plus-square"></i> Add Binary</a>
+        </div>
+    </div>
+
+    <div class="row">
 
 
-            <table class="table">
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Version</th>
-                    <th>Actions</th>
-                </tr>
-                {% for binary in binaries %}
-                    <tr>
-                        <td>{{ binary.name }}</td>
-                        <td>{{ binary.type }}</td>
-                        <td>{{ binary.version }}</td>
-                        <td>
-                            <a href="" class="btn btn-lg btn-outline-secondary"><i data-feather="edit"></i></a>
-                            <a href="" class="btn btn-lg btn-outline-danger"><i data-feather="trash-2"></i></a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+        {% for binary in binaries %}
+            <div class="col-sm-3">
+                <div class="card">
+                    {% if binary.type == 0 %}
+                        <img src="{% static 'img/server/bungeecord.png' %}" class="card-img-top"
+                             alt="{{ binary.type.get_type_display }}">
+                    {% elif binary.type == 1 %}
+                        <img src="{% static 'img/server/spigot.png' %}" class="card-img-top"
+                             alt="{{ binary.type.get_type_display }}">
+                    {% elif binary.type == 2 %}
+                        <img src="{% static 'img/server/bukkit.png' %}" class="card-img-top"
+                             alt="{{ binary.type.get_type_display }}">
+                    {% elif binary.type == 3 %}
+                        <img src="{% static 'img/server/papermc.png' %}" class="card-img-top"
+                             alt="{{ binary.type.get_type_display }}">
+                    {% elif binary.type == 4 %}
+                        <img src="{% static 'img/server/vanilla.png' %}" class="card-img-top"
+                             alt="{{ server.server_binary.get_type_display }}">
+                    {% endif %}
 
+                    <div class="card-body">
+                        <h5 class="card-title">{{ binary.name }}</h5>
+                        <p class="card-text">{{ binary.get_type_display }} Version: {{ binary.version }}</p>
+                        <a href="#" class="btn btn-outline-secondary"><i class="bi bi-pencil-square"></i></a>
+                        <a href="#" class="btn btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    </div>
+                </div>
+            </div>
 
-            <p>There are no Server Binaries added yet. Add a new by clicking XYX.</p>
-            <a href="{% url 'server-binaries-download' %}" class="btn btn-pinterest">Download a binary</a>
-
+        {% endfor %}
 
     </div>
+
+
 {% endblock %}
