@@ -85,19 +85,28 @@
                 </div>
             </form>
         </div>
+    </div>
 
 
-        <script>
+    {% if bungee_config %}
+        <div class="mb-3">
+            <h1 class="h3 d-inline align-middle">BungeeConfig</h1>
+        </div>
+        <pre><code class="language-yml">{{ bungee_config }}</code></pre>
+    {% endif %}
 
-            const deleteLink = document.getElementById('delete');
-            deleteLink.addEventListener('click', e => confirmDelete(e));
-            const confirmDelete = e => {
-                const result = window.confirm('Are you sure to delete the Server?');
-                if (!result) {
-                    e.preventDefault();
-                }
+
+    <script>
+
+        const deleteLink = document.getElementById('delete');
+        deleteLink.addEventListener('click', e => confirmDelete(e));
+        const confirmDelete = e => {
+            const result = window.confirm('Are you sure to delete the Server?');
+            if (!result) {
+                e.preventDefault();
             }
-        </script>
+        }
+    </script>
 
 
 {% endblock %}

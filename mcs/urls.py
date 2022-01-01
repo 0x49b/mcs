@@ -30,4 +30,8 @@ urlpatterns = [
     path('start-server/', dashboardviews.start_server, name="dashboard-start-server"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/profile/', coreviews.profile_page, name="profile"),
+
+    path('prometheus/', include('django_prometheus.urls')),
 ]
+
+

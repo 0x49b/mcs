@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import psutil as psutil
+import yaml
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -44,10 +45,19 @@ def edit_server(request, server_identifier):
     server_form = ServerForm(instance=server)
     server_properties_form = ServerPropertiesForm(instance=server.server_properties)
     upload_world_form = UploadFileForm()
+    bungee_config = None
+
+    if server.server_binary.type == 0:
+        confpath = os.path.join(settings.SERVERS_DIR, server_identifier, 'config.yml')
+        with open(confpath) as file:
+            try:
+                bungee_config = yaml.safe_load(file)
+            except yaml.YAMLError as exc:
+                print(exc)
 
     return render(request, "servers/edit.html",
                   {'server_form': server_form, 'server_properties_form': server_properties_form,
-                   'upload_world_form': upload_world_form, 'server': server})
+                   'upload_world_form': upload_world_form, 'server': server, 'bungee_config': bungee_config})
 
 
 def delete_server(request, server_identifier):
