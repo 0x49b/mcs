@@ -85,15 +85,19 @@
                 </div>
             </form>
         </div>
-    </div>
+
 
 
     {% if bungee_config %}
-        <div class="mb-3">
-            <h1 class="h3 d-inline align-middle">BungeeConfig</h1>
+        <div class="row">
+            <div class="mb-3">
+                <h1 class="h3 d-inline align-middle">BungeeConfig</h1>
+            </div>
+            <pre><code class="language-yml">{{ bungee_config }}</code></pre>
         </div>
-        <pre><code class="language-yml">{{ bungee_config }}</code></pre>
     {% endif %}
+
+    </div>
 
 
     <script>
