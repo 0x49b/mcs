@@ -118,6 +118,8 @@ class Server(models.Model):
     class Meta:
         verbose_name = "Server"
         verbose_name_plural = "Servers"
+        permissions = (("op", "Is OP"),
+                       ("restart_server", "Can restart Server"),)
 
     name = models.CharField(max_length=150, null=False, blank=False)
     server_properties = models.OneToOneField(ServerProperties, on_delete=models.CASCADE)

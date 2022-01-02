@@ -1,45 +1,43 @@
-import io
-import logging
 import os.path
-import shutil
 import signal
 import subprocess
 import sys
 import threading
 import time
-from pathlib import Path
-
-import psutil as psutil
 import yaml
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.core.files.uploadedfile import TemporaryUploadedFile
-from .models import ServerProperties, ServerBin, Server
+from .models import ServerBin, Server
 from .form import ServerForm, ServerPropertiesForm, UploadFileForm
 import requests
-from channels.layers import get_channel_layer
-from io import StringIO
 import shutil
 import zipfile
+import logging
+
+logger = logging.getLogger('django')
 
 
-# Create your views here.
+@login_required
 def index(request):
     servers = Server.objects.all()
     return render(request, 'servers/index.html', {'servers': servers})
 
 
+@login_required
 def binaries_overview(request):
     binaries = ServerBin.objects.all()
     return render(request, 'servers/binaries-overview.html', {'binaries': binaries})
 
 
+@login_required
 def new_server(request):
     stu = ServerForm()
     return render(request, "servers/new-server.html", {'form': stu})
 
 
+@login_required
 def edit_server(request, server_identifier):
     server = Server.objects.get(identifier=server_identifier)
     server_form = ServerForm(instance=server)
@@ -53,13 +51,18 @@ def edit_server(request, server_identifier):
             try:
                 bungee_config = yaml.safe_load(file)
             except yaml.YAMLError as exc:
-                print(exc)
+                logger.error(exc)
 
     return render(request, "servers/edit.html",
-                  {'server_form': server_form, 'server_properties_form': server_properties_form,
-                   'upload_world_form': upload_world_form, 'server': server, 'bungee_config': bungee_config})
+                  {'server_form': server_form,
+                   'server_properties_form': server_properties_form,
+                   'upload_world_form': upload_world_form,
+                   'server': server,
+                   'bungee_config': bungee_config}
+                  )
 
 
+@login_required
 def delete_server(request, server_identifier):
     server = Server.objects.get(identifier=server_identifier)
     stop_single_server(server_identifier)
@@ -69,11 +72,13 @@ def delete_server(request, server_identifier):
         messages.info(request, 'Server %s deleted' % server_identifier)
         server.delete()
     except Exception as e:
-        messages.error(request, 'Error deleting erver %s: %s' % (server_identifier, e))
+        messages.error(request, 'Error deleting server %s: %s' % (server_identifier, e))
+        logger.error("Error deleting server")
 
     return redirect('server-overview')
 
 
+@login_required
 def upload_world(request, server_identifier):
     server = Server.objects.get(identifier=server_identifier)
 
@@ -93,7 +98,7 @@ def upload_world(request, server_identifier):
         try:
             shutil.rmtree(path)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
         try:
             with zipfile.ZipFile(dest, 'r') as zip_ref:
@@ -106,7 +111,7 @@ def upload_world(request, server_identifier):
             os.rename(os.path.join(server_path, world_name), os.path.join(server_path, 'world'))
             os.remove(dest)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
         messages.info(request, 'Added new World, you can now start the server again')
     else:
@@ -114,6 +119,7 @@ def upload_world(request, server_identifier):
     return redirect('server-edit', server_identifier)
 
 
+@login_required
 def remove_world(request, server_identifier):
     path = os.path.join(settings.SERVERS_DIR, server_identifier, 'world')
 
@@ -128,10 +134,12 @@ def remove_world(request, server_identifier):
     return redirect('server-edit', server_identifier)
 
 
+@login_required
 def show_server_console(request, server_identifier):
     return render(request, 'servers/console.html', {'server_identifier': server_identifier})
 
 
+@login_required
 def start_server(request, server_identifier=None):
     if server_identifier is not None:
         if server_identifier == 'all':
@@ -147,7 +155,6 @@ def start_server(request, server_identifier=None):
 def start_single_server(server_identifier):
     server = Server.objects.get(identifier=server_identifier)
     if check_binary(server.server_binary):
-        print(check_server_dir(server))
         if not check_server_dir(server):
             create_server_dir_and_copy_binary(server)
         else:
@@ -155,7 +162,7 @@ def start_single_server(server_identifier):
 
 
 def start_all_server():
-    print("in all servers")
+    logger.info("in all servers")
     servers = Server.objects.all()
     for server in servers:
         start_single_server(server.identifier)
@@ -166,11 +173,12 @@ def stop_single_server(server_identifier):
     try:
         os.kill(int(server.server_pid), signal.SIGTERM)
     except Exception as e:
-        print(e)
+        logger.error(e)
     server.server_pid = None
     server.save()
 
 
+@login_required
 def stop_server(request, server_identifier):
     if server_identifier is not None:
         if server_identifier == 'all':
@@ -185,6 +193,7 @@ def stop_server(request, server_identifier):
     return redirect('server-overview')
 
 
+@login_required
 def restart_server(request, server_identifier):
     if server_identifier is not None:
         if server_identifier == 'all':

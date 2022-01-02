@@ -3,6 +3,8 @@ import os
 from celery import Celery
 
 # Set the default Django settings module for the 'celery' program.
+from mcs import settings
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcs.settings')
 
 app = Celery('mcs')
@@ -15,6 +17,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.broker_url = 'redis://localhost:6379/0'
 
 # Load task modules from all registered Django apps.
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.autodiscover_tasks()
 
 

@@ -17,8 +17,22 @@
 
 <main class="content">
     <div class="container-fluid p-0">
-        {% block content %}
-        {% endblock %}
+        <main class="d-flex w-100">
+            <div class="container d-flex flex-column">
+                <div class="row vh-95">
+                    <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                        <div class="d-table-cell align-middle">
+                            <div class="card">
+                                <div class="card-body">
+                                    {% block content %}
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 </main>
 

@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 import os
 
@@ -32,7 +33,9 @@ INSTALLED_APPS = [
     'django_prometheus',
     'crispy_forms',
     'django_celery_results',
+    'django_celery_beat',
     'channels',
+    # 'django_q',
 
     'core',
     'servers',
@@ -157,4 +160,66 @@ CHANNEL_LAYERS = {
             "hosts": [('127.0.0.1', 6379)],
         },
     },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'logserver.console': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '%(asctime)s %(levelname)s: %(threadName)s %(name)s %(message)s',
+        },
+        'logserver.file': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '%(asctime)s %(levelname)s: %(threadName)s %(name)s %(message)s',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'logserver.console',
+            'stream': sys.stdout
+        },
+        'django.console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'logserver.console',
+            'stream': sys.stdout
+        },
+        'qconsole': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'logserver.console',
+            'stream': sys.stdout
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', ],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['console', ],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['console', ],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', ],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django-q': {
+            'handlers': ['qconsole', ],
+            'level': 'DEBUG',
+        },
+    }
+
 }
